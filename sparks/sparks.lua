@@ -1,6 +1,6 @@
 _addon.name = 'Sparks'
 _addon.author = 'Brax(orig) + Sammeh + Langly'
-_addon.version = '2.0.0.1'
+_addon.version = '2.0.0.2'
 _addon.command = 'sparks'
 
 require('tables')
@@ -446,7 +446,7 @@ windower.register_event('incoming chunk',function(id,data,modified,injected,bloc
 end)
 
 windower.register_event('Zone Change', function()
-	coroutine.schedule(get_spark_update(), 5)
+	coroutine.schedule(get_spark_update, 5)
 end)
 
 function reset_me()
