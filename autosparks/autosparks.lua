@@ -11,14 +11,14 @@ modification, are permitted provided that the following conditions are met:
     * Redistributions in binary form must reproduce the above copyright
       notice, this list of conditions and the following disclaimer in the
       documentation and/or other materials provided with the distribution.
-    * Neither the name of Autosparks nor the
+    * Neither the name of React nor the
       names of its contributors may be used to endorse or promote products
       derived from this software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL LANGLY BE LIABLE FOR ANY
+DISCLAIMED. IN NO EVENT SHALL Langly BE LIABLE FOR ANY
 DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
 LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
@@ -30,7 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 _addon.name = 'AutoSparks'
 _addon.author = 'Langly@Quetz'
-_addon.version = '1.11.29.2017'
+_addon.version = '1.12.3.2017'
 _addon.language = 'English'
 _addon.commands = {'autosparks', 'as'}
 
@@ -53,9 +53,13 @@ if windower.ffxi.get_player() then
 	runtarget = {}
 	last_task = nil
 	running = false
+	gil_stats = {}
+	gil_stats.show = false
+	gil_stats.start = 0
+	gil_stats.current = 0
 end
 
---NPCs and NavPoints for W.Adoulin
+--NPCs and Anchor Points
 npc = {sparks = {id = 17826103, name="Eternal Flame", x=13.5, y=-121, z=0, zone=256},
 		shop = {id = 17826074, name="Defliaa", x=44, y=-118, z=0, index=282, zone=256},
 		midpoint = {id = 0, name="midpoint_1", x=24, y=-120, z=0, zone=256},
@@ -67,38 +71,42 @@ npc = {sparks = {id = 17826103, name="Eternal Flame", x=13.5, y=-121, z=0, zone=
 --------------------------------
 -- Set text Object
 --------------------------------
-statustext = texts.new('${Player|(None)} in ${PlayerZone|(None)} has ${Sparks|0}/99,999 Sparks. Status: ${Status|None}. Busy: ${busy|false}.', {text = {size = 10}})
+statustext = {}
+statustext.pos = {}
+statustext.pos.x = 0
+statustext.pos.y = 0
+statustext.text = {}
+statustext.text.size = 10
+statustext.text.font = 'Arial'
+
+settings = config.load(statustext)
+statustext = texts.new('${Player|(None)} in ${PlayerZone|(None)} has ${Sparks|0}/99,999 Sparks. -- Status: ${Status|None}. -- Busy: ${busy|false}.', settings)
 statustext.Player = player.name
 statustext.PlayerZone = current_zone
 statustext.Sparks = 0
 statustext.Status = status
 statustext.busy = busy
 statustext:show()
-
 --------------------------------
 -- Load / Packet Parser / Cmds
 --------------------------------
 windower.register_event('load', function()
 	get_spark_update()
+	gil_stats.start = current_gil()
 	windower.send_command("lua load sellnpc")
 	windower.send_command("lua load sparks")
 end)
 
 windower.register_event('incoming chunk',function(id,data,modified,injected,blocked)
-    if id == 0x113 then -- Update Current Sparks via 113
-        local p = packets.parse('incoming',data)
-		statustext.Sparks,current_sparks = p['Sparks of Eminence'],p['Sparks of Eminence']
-    end
     if id == 0x110 then -- Update Current Sparks via 110
 		local header, value1, value2, Unity1, Unity2, Unknown = data:unpack('II')
 		statustext.Sparks,current_sparks = value1,value1
-		--windower.send_command("input /p Total Sparks: "..value1..".")
 	end
 	if id == 0x00A then -- Update Current Zone via 00A
 		local p = packets.parse('incoming',data)
 		statustext.PlayerZone,current_zone = res.zones[p['Zone']].en,res.zones[p['Zone']].en
 	end
-	if id == 0x034 or id == 0x032 then -- Enter Reisenjima (NO VALIDATION)
+	if id == 0x034 or id == 0x032 then -- Enter Reisenjima (NO VALIDATION) and Keying
 		if current_zone == "La Theine Plateau" then
 			local packet = packets.new('outgoing', 0x05B)
 			packet["Option Index"]= 0
@@ -131,6 +139,7 @@ windower.register_event('incoming chunk',function(id,data,modified,injected,bloc
 			packets.inject(packet)
 			local packet = packets.new('outgoing', 0x016, {["Target Index"]=player.index,})
 			packets.inject(packet)
+			return true
 		end
 		if current_zone == "Western Adoulin" and status == "Keying" then
 			local packet = packets.new('outgoing', 0x05B)
@@ -175,6 +184,8 @@ windower.register_event('incoming chunk',function(id,data,modified,injected,bloc
 			local packet = packets.new('outgoing', 0x016, {["Target Index"]=player.index,})
 			packets.inject(packet)
 			unbusy()
+			status = "ToReisen"
+			return true
 		end
 	end
 end)
@@ -182,11 +193,21 @@ end)
 windower.register_event('addon command', function (command, ...)
 	command = command and command:lower()
 	local args = T{...}
-	if command == "test" then
-
+	if command == "stats" then
+		if gil_stats.show == false then
+			gil_stats.show = true
+			local starting_gil = comma_value(gil_stats.start)
+			statustext:appendline("Starting Gil: "..starting_gil.."  =>  Earned: ${earned|0}")
+		else
+			gil_stats.show = false
+			statustext:clear()
+			get_spark_update()
+			statustext.Player = player.name
+			statustext.PlayerZone = current_zone
+		end
 	end
 	if command == "start" then
-		windower.add_to_chat(10, "Hit Start Command")
+		windower.add_to_chat(10, "Starting AutoSparks.")
 		running = true
 		status = "Starting"
 		Engine()
@@ -195,7 +216,7 @@ windower.register_event('addon command', function (command, ...)
 		running = false
 		status = "Stopping"
 		busy = false
-		windower.add_to_chat(10, "Hit Stop Command")
+		windower.add_to_chat(10, "Stopping AutoSparks")
 	end
 end)
 
@@ -243,9 +264,22 @@ function inventory_space()
 	return free
 end
 
+function current_gil()
+	local items
+	items = windower.ffxi.get_items()
+	return items.gil
+end
+
+function earned_gil()
+	local earned = 0
+	local current = current_gil()
+	earned = current - gil_stats.start
+	return earned
+end
+
 function shield_count()
 	local count = 0
-	local items = windower.ffxi.get_items(res.bags:with('english', 'Inventory').id)
+	local items = windower.ffxi.get_items().inventory
 	for _,v in pairs(items) do
 		if type(v) == "table" then
 			for k,value in pairs(v) do
@@ -258,6 +292,16 @@ function shield_count()
 	return count
 end
 
+function comma_value(amount)
+  local formatted = amount
+  while true do  
+    formatted, k = string.gsub(formatted, "^(-?%d+)(%d%d%d)", '%1,%2')
+    if (k==0) then
+      break
+    end
+  end
+  return formatted
+end
 --------------------------------
 -- Navigators
 --------------------------------
@@ -378,6 +422,7 @@ end
 
 -- Main Observer: Stops running actions when target hit / modifies status when necessary
 windower.register_event('prerender', function()
+	statustext:update()
 	if next(runtarget) ~= nil then
 		status = "Running"
 		if distance(runtarget.x, runtarget.y) < 2 then
@@ -406,6 +451,7 @@ windower.register_event('prerender', function()
 		if shields == 0 then
 			status = "Idle"
 			unbusy()
+			statustext.earned = comma_value(earned_gil())
 		end
 	end
 	if status == "Gaining" then
