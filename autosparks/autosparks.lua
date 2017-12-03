@@ -1,6 +1,6 @@
 --[[
 
-Copyright © 2017, Langly
+Copyright © 2017, Langly of Quetzalcoatl
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ]]
 
 _addon.name = 'AutoSparks'
-_addon.author = 'Langly'
+_addon.author = 'Langly@Quetz'
 _addon.version = '1.12.3.2017'
 _addon.language = 'English'
 _addon.commands = {'autosparks', 'as'}
@@ -107,7 +107,7 @@ windower.register_event('incoming chunk',function(id,data,modified,injected,bloc
 		statustext.PlayerZone,current_zone = res.zones[p['Zone']].en,res.zones[p['Zone']].en
 	end
 	if id == 0x034 or id == 0x032 then -- Enter Reisenjima (NO VALIDATION) and Keying
-		if current_zone == "La Theine Plateau" then
+		if current_zone == "La Theine Plateau" and running = true then
 			local packet = packets.new('outgoing', 0x05B)
 			packet["Option Index"]= 0
 			packet["_unknown1"]= 0
@@ -141,7 +141,7 @@ windower.register_event('incoming chunk',function(id,data,modified,injected,bloc
 			packets.inject(packet)
 			return true
 		end
-		if current_zone == "Western Adoulin" and status == "Keying" then
+		if current_zone == "Western Adoulin" and status == "Keying" and running = true then
 			local packet = packets.new('outgoing', 0x05B)
 			packet["Option Index"]= 10
 			packet["_unknown1"]= 0
