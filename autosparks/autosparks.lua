@@ -1,6 +1,6 @@
 --[[
 
-Copyright © 2017, Langly of Quetzalcoatl
+Copyright © 2017, Langly
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ]]
 
 _addon.name = 'AutoSparks'
-_addon.author = 'Langly@Quetz'
+_addon.author = 'Langly'
 _addon.version = '1.12.3.2017'
 _addon.language = 'English'
 _addon.commands = {'autosparks', 'as'}
