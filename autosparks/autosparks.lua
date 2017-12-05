@@ -481,20 +481,24 @@ function Engine()
 			end
 		end
 	elseif status == "Zoned" then -- Zone Action Follow Ups
-		if tonumber(current_sparks) > 55000 then
-			status = "ToAdoulin"
-		else
+		if tonumber(current_sparks) < 55000 then
 			if current_zone == "La Theine Plateau" then -- We just zoned into La Theine, enter the portal.
 				if busy == false then
 					enter_reisen()
 				end
-			elseif current_zone == "Western Adoulin" then -- We just zoned into Adoulin, run to Sparks NPC
-				if busy == false then
-					runto(npc.sparks)
-				end
 			elseif current_zone == "Reisenjima" then -- We just zoned in, run to Ingress to appear like we're not horrible cheaters
 				if busy == false then
 					runto(npc.ingress)
+				end
+			else -- We are in any zone after home pointing or warping, get back to Reisen
+				if busy == false then
+					teleport_ring()
+				end
+			end
+		else
+			elseif current_zone == "Western Adoulin" then -- We just zoned into Adoulin, run to Sparks NPC
+				if busy == false then
+					runto(npc.sparks)
 				end
 			else
 				if busy == false then
