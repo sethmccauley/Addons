@@ -441,7 +441,7 @@ windower.register_event('prerender', function()
 	if status == "Buying" then -- Watch for the last possible shield purchase
 		local free = inventory_space()
 		local shields = shield_count()
-		if free == 0 or shields == 36 or current_sparks < 2755 then
+		if free == 0 or shields == 36 or tonumber(current_sparks) < 2755 then
 			status = "Idle"
 			unbusy()
 		end
@@ -481,22 +481,26 @@ function Engine()
 			end
 		end
 	elseif status == "Zoned" then -- Zone Action Follow Ups
-		if current_zone == "La Theine Plateau" then -- We just zoned into La Theine, enter the portal.
-			if busy == false then
-				enter_reisen()
-			end
-		elseif current_zone == "Western Adoulin" then -- We just zoned into Adoulin, run to Sparks NPC
-			if busy == false then
-				runto(npc.sparks)
-			end
-		elseif current_zone == "Reisenjima" then -- We just zoned in, run to Ingress to appear like we're not horrible cheaters
-			if busy == false then
-				runto(npc.ingress)
+		if tonumber(current_sparks) > 55000 then
+			if current_zone == "La Theine Plateau" then -- We just zoned into La Theine, enter the portal.
+				if busy == false then
+					enter_reisen()
+				end
+			elseif current_zone == "Western Adoulin" then -- We just zoned into Adoulin, run to Sparks NPC
+				if busy == false then
+					runto(npc.sparks)
+				end
+			elseif current_zone == "Reisenjima" then -- We just zoned in, run to Ingress to appear like we're not horrible cheaters
+				if busy == false then
+					runto(npc.ingress)
+				end
+			else
+				if busy == false then
+					hp_warp()
+				end
 			end
 		else
-			if busy == false then
-				hp_warp()
-			end
+			status = "ToReisen"
 		end
 	elseif status == "Idle" then -- Idle Only Occurs after a runto completed
 		if current_zone == "Western Adoulin" then
