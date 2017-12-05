@@ -441,7 +441,7 @@ windower.register_event('prerender', function()
 	if status == "Buying" then -- Watch for the last possible shield purchase
 		local free = inventory_space()
 		local shields = shield_count()
-		if free == 0 or shields == 36 then
+		if free == 0 or shields == 36 or current_sparks < 2755 then
 			status = "Idle"
 			unbusy()
 		end
