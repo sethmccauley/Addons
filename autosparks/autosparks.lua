@@ -482,6 +482,8 @@ function Engine()
 		end
 	elseif status == "Zoned" then -- Zone Action Follow Ups
 		if tonumber(current_sparks) > 55000 then
+			status = "ToAdoulin"
+		else
 			if current_zone == "La Theine Plateau" then -- We just zoned into La Theine, enter the portal.
 				if busy == false then
 					enter_reisen()
@@ -499,8 +501,6 @@ function Engine()
 					hp_warp()
 				end
 			end
-		else
-			status = "ToReisen"
 		end
 	elseif status == "Idle" then -- Idle Only Occurs after a runto completed
 		if current_zone == "Western Adoulin" then
