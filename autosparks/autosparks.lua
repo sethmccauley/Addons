@@ -107,7 +107,7 @@ windower.register_event('incoming chunk',function(id,data,modified,injected,bloc
 		statustext.PlayerZone,current_zone = res.zones[p['Zone']].en,res.zones[p['Zone']].en
 	end
 	if id == 0x034 or id == 0x032 then -- Enter Reisenjima (NO VALIDATION) and Keying
-		if current_zone == "La Theine Plateau" and running = true then
+		if current_zone == "La Theine Plateau" and running == true then
 			local packet = packets.new('outgoing', 0x05B)
 			packet["Option Index"]= 0
 			packet["_unknown1"]= 0
@@ -141,7 +141,7 @@ windower.register_event('incoming chunk',function(id,data,modified,injected,bloc
 			packets.inject(packet)
 			return true
 		end
-		if current_zone == "Western Adoulin" and status == "Keying" and running = true then
+		if current_zone == "Western Adoulin" and status == "Keying" and running == true then
 			local packet = packets.new('outgoing', 0x05B)
 			packet["Option Index"]= 10
 			packet["_unknown1"]= 0
