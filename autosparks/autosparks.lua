@@ -30,7 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 _addon.name = 'AutoSparks'
 _addon.author = 'Langly@Quetz'
-_addon.version = '1.12.3.2017'
+_addon.version = '1.12.4.2017'
 _addon.language = 'English'
 _addon.commands = {'autosparks', 'as'}
 
@@ -496,7 +496,7 @@ function Engine()
 				end
 			end
 		else
-			elseif current_zone == "Western Adoulin" then -- We just zoned into Adoulin, run to Sparks NPC
+			if current_zone == "Western Adoulin" then -- We just zoned into Adoulin, run to Sparks NPC
 				if busy == false then
 					runto(npc.sparks)
 				end
