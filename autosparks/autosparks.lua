@@ -218,10 +218,14 @@ windower.register_event('addon command', function (command, ...)
 		busy = false
 		windower.add_to_chat(10, "Stopping AutoSparks")
 	end
+	if command == "test" then
+		debugthis()
+	end
 end)
 
 function debugthis()
-
+	local entity = windower.ffxi.get_player()
+	windower.add_to_chat(5, entity.status.." "..(entity.status_id or 0).." and in combat: "..tostring(entity.in_combat))
 end
 
 --------------------------------
@@ -384,10 +388,10 @@ function enter_reisen()
 				poke_npc(npc.portal.id, npc.portal.index)
 				
 				local packet = packets.new('outgoing', 0x05B)
-				packet["Target"]= 17195620
+				packet["Target"]= 17195618
 				packet["Option Index"]= 0
 				packet["_unknown1"]= 0
-				packet["Target Index"]= 612
+				packet["Target Index"]= 610
 				packet["Automated Message"]= true
 				packet["_unknown2"]= 0
 				packet["Zone"]= 102
@@ -395,10 +399,10 @@ function enter_reisen()
 				packets.inject(packet)
 				
 				local packet = packets.new('outgoing', 0x05B)
-				packet["Target"]= 17195620
+				packet["Target"]= 17195618
 				packet["Option Index"]= 0
 				packet["_unknown1"]= 0
-				packet["Target Index"]= 612
+				packet["Target Index"]= 610
 				packet["Automated Message"]= true
 				packet["_unknown2"]= 0
 				packet["Zone"]= 102
@@ -406,10 +410,10 @@ function enter_reisen()
 				packets.inject(packet)
 				
 				local packet = packets.new('outgoing', 0x05B)
-				packet["Target"]= 17195620
+				packet["Target"]= 17195618
 				packet["Option Index"]= 2
 				packet["_unknown1"]= 0
-				packet["Target Index"]= 612
+				packet["Target Index"]= 610
 				packet["Automated Message"]= false
 				packet["_unknown2"]= 0
 				packet["Zone"]= 102
