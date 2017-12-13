@@ -64,7 +64,7 @@ npc = {sparks = {id = 17826103, name="Eternal Flame", x=13.5, y=-121, z=0, zone=
 		shop = {id = 17826074, name="Defliaa", x=44, y=-118, z=0, index=282, zone=256},
 		midpoint = {id = 0, name="midpoint_1", x=24, y=-120, z=0, zone=256},
 		accolade = {id = 17826181, name="Nunaarl Bthtrogg", x=14, y=-111, z=0, index=389, menuid=5149, zone=256},
-		portal = {id = 17195620, name="Dimensional Portal", x=0, y=0, z=0, index=612, menuid=222},
+		portal = {id = 17195618, name="Dimensional Portal", x=0, y=0, z=0, index=610, menuid=222},
 		ingress = {id = 17969975, name="Ethereal Ingress #1", x=-495, y=-477, z=0, index=823}
 	}
 
@@ -383,15 +383,17 @@ function enter_reisen()
 	-- Enter Reisen from La Theine Plateau
 	if current_zone == "La Theine Plateau" and status == "Zoned" then
 		for i,v in pairs(windower.ffxi.get_mob_array()) do
-			if string.find(v['name'],'Dimensional Portal')then
+			if string.find(v['name'],'Dimensional Portal') then
+				npc.portal.id = v.id
+				npc.portal.index = v.index
 				busy = true
 				poke_npc(npc.portal.id, npc.portal.index)
 				
 				local packet = packets.new('outgoing', 0x05B)
-				packet["Target"]= 17195618
+				packet["Target"]= npc.portal.id
 				packet["Option Index"]= 0
 				packet["_unknown1"]= 0
-				packet["Target Index"]= 610
+				packet["Target Index"]= npc.portal.index
 				packet["Automated Message"]= true
 				packet["_unknown2"]= 0
 				packet["Zone"]= 102
@@ -399,10 +401,10 @@ function enter_reisen()
 				packets.inject(packet)
 				
 				local packet = packets.new('outgoing', 0x05B)
-				packet["Target"]= 17195618
+				packet["Target"]= npc.portal.id
 				packet["Option Index"]= 0
 				packet["_unknown1"]= 0
-				packet["Target Index"]= 610
+				packet["Target Index"]= npc.portal.index
 				packet["Automated Message"]= true
 				packet["_unknown2"]= 0
 				packet["Zone"]= 102
@@ -410,10 +412,10 @@ function enter_reisen()
 				packets.inject(packet)
 				
 				local packet = packets.new('outgoing', 0x05B)
-				packet["Target"]= 17195618
+				packet["Target"]= npc.portal.id
 				packet["Option Index"]= 2
 				packet["_unknown1"]= 0
-				packet["Target Index"]= 610
+				packet["Target Index"]= npc.portal.index
 				packet["Automated Message"]= false
 				packet["_unknown2"]= 0
 				packet["Zone"]= 102
