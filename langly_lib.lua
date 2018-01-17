@@ -34,6 +34,23 @@ function get_marray(--[[optional]]name)
 	return new_marray
 end
 
+-- Returns a table of the nearest mob to the character of all available mobs or of submitted table.
+function pick_nearest(--[[optional]]t)
+	local marray = t or get_marray()
+	local nearest_distance = 50
+	local nearest_mob = {}
+	for i,v in pairs(marray) do
+		if v.valid_target then
+			if math.sqrt(v.distance) < nearest_distance then
+				nearest_distance = math.sqrt(v.distance)
+				table.clear(nearest_mob)
+				nearest_mob = v
+			end
+		end
+	end
+	return nearest_mob
+end
+
 -- Returns the correct value of sparks from the incoming 0x110 packet. 
 windower.register_event('incoming chunk',function(id,data,modified,injected,blocked)
 	if id == 0x110 then -- Update Current Sparks via 110
@@ -41,3 +58,22 @@ windower.register_event('incoming chunk',function(id,data,modified,injected,bloc
 		current_sparks = value1
 	end
 end)
+
+-- Attacks target specified.
+function attack(id, index)
+	if id then
+		local packet = packets.new('outgoing', 0x01A, {
+			["Target"]=id,
+			["Target Index"]=index,
+			["Category"]=2,
+			["Param"]=0,
+			["_unknown1"]=0})
+		packets.inject(packet)
+	end
+end
+
+-- Prettys up some numbers for human consumption
+function commaformat(number)
+   return string.format("%d", number):reverse():gsub( "(%d%d%d)" , "%1," ):reverse():gsub("^,","")
+end
+
