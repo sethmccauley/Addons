@@ -36,7 +36,7 @@ end
 
 -- Returns the correct value of sparks from the incoming 0x110 packet. 
 windower.register_event('incoming chunk',function(id,data,modified,injected,blocked)
-  if id == 0x110 then -- Update Current Sparks via 110
+	if id == 0x110 then -- Update Current Sparks via 110
 		local header, value1, value2, Unity1, Unity2, Unknown = data:unpack('II')
 		current_sparks = value1
 	end
