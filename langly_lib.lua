@@ -104,8 +104,9 @@ function detect_enchanted_gear()
 	return enchanted_gear
 end
 
+-- Item checked must be equipped for this to return any meaningful value.
 function is_enchant_ready(--[[name of item]]item)
-	local item_id = res.items:find(function(v) if v.name == item then return true end end) or 0
+	local item_id, item = res.items:find(function(v) if v.name == item then return true end end)
 	local inventory = windower.ffxi.get_items()
 	local usable_bags = T{'inventory','wardrobe','wardrobe2','wardrobe3','wardrobe4'}
 	
@@ -115,7 +116,7 @@ function is_enchant_ready(--[[name of item]]item)
 				for key,val in pairs(v) do
 					if type(val) == 'table' and val.id == item_id and val.extdata then
 						local extdata = extdata.decode(val)
-						if extdata.usable then
+						if extdata.activation_time - extdata.next_use_time > item.cast_delay then
 							return true
 						else
 							return false
