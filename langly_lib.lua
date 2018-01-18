@@ -130,7 +130,7 @@ end
 
 function has_enchant_charges(--[[name of item]]item)
 	local item_id, item = res.items:find(function(v) if v.name == item then return true end end)
-	local extdata = exdata.decode(item)
+	local extdata = extdata.decode(item)
 	
 	if extdata then
 		if extdata.charges_remaining > 0 then
