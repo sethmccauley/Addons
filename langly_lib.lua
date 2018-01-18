@@ -77,10 +77,10 @@ function commaformat(number)
    return string.format("%d", number):reverse():gsub( "(%d%d%d)" , "%1," ):reverse():gsub("^,","")
 end
 
-function detect_usable_gear()
+function detect_enchanted_gear()
 	local inventory = windower.ffxi.get_items()
 	local usable_bags = T{'inventory','wardrobe','wardrobe2','wardrobe3','wardrobe4'}
-	local usable_equips = T{}
+	local enchanted_gear = T{}
 	
 	-- When activation_time > next_use_time then usable = true
 	-- When gear not equipped the activation_time is set to server_timestamp+offset
@@ -90,16 +90,39 @@ function detect_usable_gear()
 		if usable_bags:contains(i) then
 			for key,val in pairs(v) do
 				if type(val) == 'table' and val.id ~= 0 and val.extdata then
-					local extdata = extdata.decode(val)
-					if extdata.type == 'Enchanted Equipment' then
-						usable_equips:append(val)
-						usable_equips[#usable_equips].extdata = extdata
-						usable_equips[#usable_equips].name = res.items[val.id].en
-						usable_equips[#usable_equips].bag = i
+						local extdata = extdata.decode(val)
+						if extdata.type == 'Enchanted Equipment' then
+							enchanted_gear:append(val)
+							enchanted_gear[#enchanted_gear].extdata = extdata
+							enchanted_gear[#enchanted_gear].name = res.items[val.id].en
+							enchanted_gear[#enchanted_gear].bag = i
+						end
+				end
+			end
+		end
+	end
+	return enchanted_gear
+end
+
+function is_enchant_ready(--[[name of item]]item)
+	local item_id = res.items:find(function(v) if v.name == item then return true end end) or 0
+	local inventory = windower.ffxi.get_items()
+	local usable_bags = T{'inventory','wardrobe','wardrobe2','wardrobe3','wardrobe4'}
+	
+	if item_id ~= 0 then
+		for i,v in pairs(inventory) do
+			if usable_bags:contains(i) then
+				for key,val in pairs(v) do
+					if type(val) == 'table' and val.id == item_id and val.extdata then
+						local extdata = extdata.decode(val)
+						if extdata.usable then
+							return true
+						else
+							return false
+						end
 					end
 				end
 			end
 		end
 	end
-	return usable_equips
 end
