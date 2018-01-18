@@ -77,3 +77,29 @@ function commaformat(number)
    return string.format("%d", number):reverse():gsub( "(%d%d%d)" , "%1," ):reverse():gsub("^,","")
 end
 
+function detect_usable_gear()
+	local inventory = windower.ffxi.get_items()
+	local usable_bags = T{'inventory','wardrobe','wardrobe2','wardrobe3','wardrobe4'}
+	local usable_equips = T{}
+	
+	-- When activation_time > next_use_time then usable = true
+	-- When gear not equipped the activation_time is set to server_timestamp+offset
+	-- This leads to the item being usable = false, equipping the gear is the only way to 
+	-- Retrieve the activation_time(?)
+	for i,v in pairs(inventory) do
+		if usable_bags:contains(i) then
+			for key,val in pairs(v) do
+				if type(val) == 'table' and val.id ~= 0 and val.extdata then
+					local extdata = extdata.decode(val)
+					if extdata.type == 'Enchanted Equipment' then
+						usable_equips:append(val)
+						usable_equips[#usable_equips].extdata = extdata
+						usable_equips[#usable_equips].name = res.items[val.id].en
+						usable_equips[#usable_equips].bag = i
+					end
+				end
+			end
+		end
+	end
+	return usable_equips
+end
