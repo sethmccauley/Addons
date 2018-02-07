@@ -6,7 +6,7 @@ This addon instantly displays your roll number, it's effect, and whether the rol
 
 If you have rolled a lucky roll, it will also prompt you and automatically stop you from doubling up on it (which can be bypassed by either doubling up again, or typing //rolltracker autostop
 
-
+Using the command //rolltracker show or //rt show will give you a text box showing your most recent rolls and values. Helpful in spammy situations.
 
 
 
