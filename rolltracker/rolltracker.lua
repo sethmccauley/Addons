@@ -27,7 +27,7 @@
 _addon.name = 'RollTracker'
 _addon.version = '2.0'
 _addon.author = 'Langly'
-_addon.commands = {'rolltracker2','rt2'}
+_addon.commands = {'rolltracker','rt'}
 
 require('luau')
 require('logger')
