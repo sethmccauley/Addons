@@ -70,7 +70,7 @@ windower.register_event('addon command',function (...)
         if cmd[1]:lower() == "help" then
             print('To stop rolltracker stopping rolls type: //rolltracker autostop')
             print('To restart rolltracker stopping doubleup type //rolltracker Doubleup')
-						print('To enable visible roll tracking type //rolltracker show')
+	    print('To enable visible roll tracking type //rolltracker show')
         end
         
         if cmd[1]:lower() == "autostop" then
