@@ -27,7 +27,7 @@
 _addon.name = 'RollTracker'
 _addon.version = '2.0'
 _addon.author = 'Langly'
-_addon.commands = {'rolltracker','rt'}
+_addon.commands = {'rolltracker2','rt2'}
 
 require('luau')
 require('logger')
@@ -42,6 +42,7 @@ defaults.bust = 1
 defaults.effected = 1
 defaults.fold = 1
 defaults.display = {}
+defaults.display.padding = 2
 defaults.display.pos = {}
 defaults.display.pos.x = 0
 defaults.display.pos.y = 0
@@ -387,10 +388,9 @@ end)
 windower.register_event('lose buff', function(buff_id)
 	local roll_lost = res.buffs[buff_id].en
 	local roll_labels = {}
-	for w in roll_lost:gmatch("%a+") do
+	for w in roll_lost:gmatch("%S+") do
 		table.insert(roll_labels, w)
 	end
-	
 	if rolls_tracked[roll_labels[1]] then
 		rolls_tracked[roll_labels[1]] = nil
 		UpdateTextBox()
@@ -416,7 +416,7 @@ end
 function UpdateTextBox()
 	local properties = L{}
 	for i,v in pairs(rolls_tracked) do
-		properties:append(i..': '..v['number']..' >> '..v['value'])
+		properties:append(' '..i..': '..v['number']..' >> '..v['value']..' ')
 	end
 	
 	text_box:clear()
