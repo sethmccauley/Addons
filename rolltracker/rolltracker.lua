@@ -70,7 +70,7 @@ windower.register_event('addon command',function (...)
         if cmd[1]:lower() == "help" then
             print('To stop rolltracker stopping rolls type: //rolltracker autostop')
             print('To restart rolltracker stopping doubleup type //rolltracker Doubleup')
-	    print('To enable visible roll tracking type //rolltracker show')
+						print('To enable visible roll tracking type //rolltracker show')
         end
         
         if cmd[1]:lower() == "autostop" then
@@ -178,9 +178,6 @@ windower.register_event('load', function()
 		local text_parts = L{}
 		text_parts:append('Roll:  ${rollname|None}')
 		text_parts:append('${number|0}')
-		
-		
-		
 end)
 
 windower.register_event('load', 'login', function()
@@ -360,6 +357,7 @@ windower.register_event('outgoing text', function(original, modified)
             windower.add_to_chat(159,'Attempting to Doubleup on a Lucky Roll: Re-double up to continue.')
             isLucky = false
             modified = ""
+						return modified
         end
     end
     
@@ -381,8 +379,6 @@ windower.register_event('outgoing text', function(original, modified)
         
         return modified
     end
-   return modified
-    
 end)
 
 windower.register_event('lose buff', function(buff_id)
