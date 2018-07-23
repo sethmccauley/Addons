@@ -66,7 +66,7 @@ windower.register_event('addon command', function(...)
 				windower.add_to_chat(2,"You have "..freeslots.." free slots, buying "..item.. " until full")
 			else
 				tobuy = purchasable
-				windower.add_to_chat(2,"You have cruor to purchase: "..purchasable..".")
+				windower.add_to_chat(2,"You have sparks to purchase: "..purchasable..".")
 			end
 			local currentloop = 0
 			while currentloop < tobuy do
