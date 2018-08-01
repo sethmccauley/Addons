@@ -24,7 +24,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ]]
 
 _addon.name = 'Sparks'
-_addon.author = 'Langly'
+_addon.author = 'Langly - Brax/Sammeh'
 _addon.version = '8.1.2018'
 _addon.command = 'sparks'
 
