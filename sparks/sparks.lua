@@ -1,6 +1,6 @@
 _addon.name = 'Sparks'
 _addon.author = 'Brax(orig) + Sammeh + Langly'
-_addon.version = '2.0.0.2'
+_addon.version = '2.0.0.3'
 _addon.command = 'sparks'
 
 require('tables')
@@ -49,10 +49,10 @@ windower.register_event('addon command', function(...)
 				--print(pkt['Target'].."-"..pkt['Target Index'])
 				poke_npc(pkt['Target'],pkt['Target Index'])
 			else 
-				windower.add_to_chat(2,"Can't find item in menu")
+				notice("Can't find item in menu")
 			end
 		else
-			windower.add_to_chat(2,"Still buying last item")
+			notice("Still buying last item")
 		end
 	elseif cmd == 'buyall' then
 		pkt = validate(item)
@@ -63,37 +63,35 @@ windower.register_event('addon command', function(...)
 		if currentzone == 241 or currentzone == 230 or currentzone == 235 or currentzone == 256 then 
 			if purchasable > freeslots then
 				tobuy = freeslots
-				windower.add_to_chat(2,"You have "..freeslots.." free slots, buying "..item.. " until full")
+				notice("You have "..freeslots.." free slots, buying "..item.. " until full.")
 			else
 				tobuy = purchasable
-				windower.add_to_chat(2,"You have sparks to purchase: "..purchasable..".")
+				notice("You have sparks to purchase: "..purchasable..".")
 			end
 			local currentloop = 0
 			while currentloop < tobuy do
-				currentloop = currentloop + 1
-				windower.add_to_chat(8,"Buying Item: "..item.." Loop: "..currentloop)
 				if not busy then
+					currentloop = currentloop + 1
+					notice("Buying Item: "..item.." Loop: "..currentloop)
 					pkt = validate(item)
 					if pkt then
 						busy = true
 						poke_npc(pkt['Target'],pkt['Target Index'])
 					else 
-						windower.add_to_chat(2,"Can't find item in menu")
+						notice("Can't find item in menu")
 					end
-				else
-					windower.add_to_chat(2,"Still buying last item")
 				end
 				sleepcounter = 0
 				while busy and sleepcounter < 5 do
 					coroutine.sleep(1)
 					sleepcounter = sleepcounter + 1
 					if sleepcounter == "4" then
-						windower.add_to_chat(2,"Probably lost a packet, waited too long!")
+						notice("Probably lost a packet, waited too long!")
 					end
 				end
 			end
 		else 
-			windower.add_to_chat(2,"You are not currently in a zone with a sparks NPC")
+			notice("You are not currently in a zone with a sparks NPC")
 		end
 	elseif cmd == 'buyki' then
 		if not busy then
@@ -104,10 +102,10 @@ windower.register_event('addon command', function(...)
 				--print(pkt['Target'].."-"..pkt['Target Index'])
 				poke_npc(pkt['Target'],pkt['Target Index'])
 			else 
-				windower.add_to_chat(2,"Can't find item in menu")
+				notice("Can't find item in menu")
 			end
 		else
-			windower.add_to_chat(2,"Still buying last item")
+			notice("Still buying last item")
 		end
 
 	elseif cmd == 'find' then
@@ -136,17 +134,17 @@ windower.register_event('addon command', function(...)
 										busy = true
 										poke_npc(pkt['Target'],pkt['Target Index'])
 									else 
-										windower.add_to_chat(2,"Can't find item in menu")
+										notice("Can't find item in menu")
 									end
 								else
-									windower.add_to_chat(2,"Still buying last item")
+									notice("Still buying last item")
 								end
 								sleepcounter = 0
 								while busy and sleepcounter < 5 do
 									coroutine.sleep(1)
 									sleepcounter = sleepcounter + 1
 									if sleepcounter == "4" then
-										windower.add_to_chat(2,"Probably lost a packet, waited too long!")
+										notice("Probably lost a packet, waited too long!")
 									end
 								end
 							end
@@ -201,17 +199,17 @@ windower.register_event('addon command', function(...)
 										busy = true
 										poke_npc(pkt['Target'],pkt['Target Index'])
 									else 
-										windower.add_to_chat(2,"Can't find item in menu")
+										notice("Can't find item in menu")
 									end
 								else
-									windower.add_to_chat(2,"Still buying last item")
+									notice("Still buying last item")
 								end
 								sleepcounter = 0
 								while busy and sleepcounter < 5 do
 									coroutine.sleep(1)
 									sleepcounter = sleepcounter + 1
 									if sleepcounter == "4" then
-										windower.add_to_chat(2,"Probably lost a packet, waited too long!")
+										notice("Probably lost a packet, waited too long!")
 									end
 								end
 							end
@@ -247,7 +245,7 @@ function validate(item)
 		end
 
 		if math.sqrt(distance)<6 then
-            local ite = fetch_db(item)
+			local ite = fetch_db(item)
 			if ite then
 				result['Target'] = target_id
 				result['Option Index'] = ite['Option']
