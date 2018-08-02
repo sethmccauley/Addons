@@ -175,7 +175,7 @@ windower.register_event('addon command', function (command, ...)
 		return
 	end
 	
-	if cmd == 'listtemp' then
+	if command == 'listtemp' then
 		local currentzone = windower.ffxi.get_info()['zone']
 		if currentzone == 291 or currentzone == 289 or currentzone == 288 then 
 			find_current_temp_items()
@@ -191,19 +191,19 @@ windower.register_event('addon command', function (command, ...)
 		return
 	end
 	
-	if cmd == 'listki' then
+	if command == 'listki' then
 		find_missing_ki()
 		for id,ki in pairs(missing_ki) do
 			warning("Missing KI:"..ki)
 		end
 	end
 	
-	if cmd == 'reset' then
+	if command == 'reset' then
 		reset_me()
 		return
 	end
 	
-	if cmd == 'buyallki' then
+	if command == 'buyallki' then
 		local currentzone = windower.ffxi.get_info()['zone']
 		if currentzone == 291 or currentzone == 289 or currentzone == 288 then 
 			find_missing_ki()
