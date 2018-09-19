@@ -386,7 +386,13 @@ windower.register_event('incoming chunk',function(id,data,modified,injected,bloc
 			local foundItem = res_items[itemID]
 			if (foundItem) then
 				local itemName = foundItem.en
-				item_received = true
+                if purchase_queue then
+                    if itemName:lower() == purchase_queue[1] then
+                        item_received = true
+                        table.remove(purchase_queue, 1)
+                    end
+                end
+                
 			end
 		end
 	end
@@ -470,6 +476,21 @@ windower.register_event('incoming chunk',function(id,data,modified,injected,bloc
 	end
 end)
 
+function item_count(id)
+	local count = 0
+	local items = windower.ffxi.get_items().inventory
+	for _,v in pairs(items) do
+		if type(v) == "table" then
+			for k,value in pairs(v) do
+				if value == id then
+					count = count +1
+				end
+			end
+		end
+	end
+	return count
+end
+
 function poke_npc(npc,target_index)
 	if npc and target_index then
 		local packet = packets.new('outgoing', 0x01A, {
@@ -490,12 +511,13 @@ end)
 windower.register_event('prerender', function()
 	if table.length(purchase_queue) > 0 then
 		send_timer = os.clock() - local_timer
-		if send_timer >= 1.1 then
+        local inv_test = windower.ffxi.get_items().inventory.max - windower.ffxi.get_items().inventory.count
+        local sprk_test = math.floor(current_sparks - fetch_db(item).Cost)
+		if send_timer >= 1.5 then
 			if item_received then
 				item_received = false
                 busy = false
 				purchase_item(purchase_queue[1])
-				table.remove(purchase_queue, 1)
 			end
 			local_timer = os.clock()
 		end
@@ -505,13 +527,15 @@ windower.register_event('prerender', function()
 end)
 
 function purchase_item(item)
-	notice('Buying item: '..item..' #'..tobuy)
+    if tobuy and tobuy%5 == 0 then
+        notice('Buying item: '..item..' #'..tobuy)
+    end
 	if not busy then
 		pkt = validate(item)
 		if pkt then
 			busy = true
 			poke_npc(pkt['Target'], pkt['Target Index'])
-			tobuy = tobuy - 1
+            tobuy = tobuy - 1
 		else
 			notice('Cant find item in menu.')
 		end;
