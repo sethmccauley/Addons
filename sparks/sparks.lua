@@ -25,7 +25,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 _addon.name = 'Sparks'
 _addon.author = 'Brax/Sammeh += Langly'
-_addon.version = '9.19.2018.2'
+_addon.version = '9.19.2018.3'
 _addon.command = 'sparks'
 
 require('tables')
@@ -387,10 +387,8 @@ windower.register_event('incoming chunk',function(id,data,modified,injected,bloc
 			if (foundItem) then
 				local itemName = foundItem.en
                 if purchase_queue then
-                    if itemName:lower() == purchase_queue[1]:lower() then
-                        item_received = true
-                        table.remove(purchase_queue, 1)
-                    end
+                    item_received = true
+                    table.remove(purchase_queue, 1)
                 end
 			end
 		end
@@ -510,14 +508,11 @@ end)
 windower.register_event('prerender', function()
 	if table.length(purchase_queue) > 0 then
 		send_timer = os.clock() - local_timer
-        local inv_test = windower.ffxi.get_items().inventory.max - windower.ffxi.get_items().inventory.count
-        local sprk_test = math.floor(current_sparks - fetch_db(item).Cost)
-		if send_timer >= 1.5 then
-			if item_received then
-				item_received = false
-                busy = false
-				purchase_item(purchase_queue[1])
-			end
+        if send_timer >= 5 then
+            busy = false
+        end
+		if send_timer >= 1.6 then
+            purchase_item(purchase_queue[1])
 			local_timer = os.clock()
 		end
 	else
@@ -533,12 +528,16 @@ function purchase_item(item)
 		pkt = validate(item)
 		if pkt then
 			busy = true
+            item_received = false
 			poke_npc(pkt['Target'], pkt['Target Index'])
             tobuy = tobuy - 1
+            if tobuy == 0 then
+                purchase_queue = nil
+            end
 		else
 			notice('Cant find item in menu.')
-		end;
+		end
 	else
 		notice('Still buying last item.')
-	end;
-end;
+	end
+end
