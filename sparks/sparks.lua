@@ -25,7 +25,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 _addon.name = 'Sparks'
 _addon.author = 'Brax/Sammeh += Langly'
-_addon.version = '8.1.2018'
+_addon.version = '9.19.2018'
 _addon.command = 'sparks'
 
 require('tables')
