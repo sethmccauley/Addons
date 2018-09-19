@@ -25,7 +25,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 _addon.name = 'Sparks'
 _addon.author = 'Brax/Sammeh += Langly'
-_addon.version = '9.19.2018'
+_addon.version = '9.19.2018.2'
 _addon.command = 'sparks'
 
 require('tables')
@@ -387,12 +387,11 @@ windower.register_event('incoming chunk',function(id,data,modified,injected,bloc
 			if (foundItem) then
 				local itemName = foundItem.en
                 if purchase_queue then
-                    if itemName:lower() == purchase_queue[1] then
+                    if itemName:lower() == purchase_queue[1]:lower() then
                         item_received = true
                         table.remove(purchase_queue, 1)
                     end
                 end
-                
 			end
 		end
 	end
