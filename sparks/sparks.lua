@@ -24,7 +24,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ]]
 
 _addon.name = 'Sparks'
-_addon.author = 'Langly - Brax/Sammeh'
+_addon.author = 'Brax/Sammeh += Langly'
 _addon.version = '8.1.2018'
 _addon.command = 'sparks'
 
@@ -493,6 +493,7 @@ windower.register_event('prerender', function()
 		if send_timer >= 1.1 then
 			if item_received then
 				item_received = false
+                busy = false
 				purchase_item(purchase_queue[1])
 				table.remove(purchase_queue, 1)
 			end
