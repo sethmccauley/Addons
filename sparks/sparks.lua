@@ -248,7 +248,7 @@ end
 
 function purchase_item(obj)
     local zone = windower.ffxi.get_info()['zone']
-    local distance = windower.ffxi.get_mob_by_id(obj.Target).distance
+    local distance = windower.ffxi.get_mob_by_id(obj.Target).distance:sqrt()
     
     if distance > 6 then
         warning('Too far from NPC, cancelling.')
