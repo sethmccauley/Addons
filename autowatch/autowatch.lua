@@ -360,7 +360,8 @@ windower.register_event('prerender', function()
 								local inventory = windower.ffxi.get_items(0)
 								local idx = 1
 								for index=1,inventory.max do
-									if inventory[index].id == 3853 and phase_displacers_available() > 0 and displacer_left > 0 then
+									if inventory[index].id == 3853 then
+                                        notice(index..' '..inventory[index].id)
                                         trade_packet['Item Index %d':format(idx)] = index
                                         if phase_displacers_available() > info.settings.displacer then
                                             trade_packet['Item Count %d':format(idx)] = info.settings.displacer
@@ -369,19 +370,17 @@ windower.register_event('prerender', function()
                                             trade_packet['Item Count %d':format(idx)] = phase_displacers_available()
                                             displacer_left = displacer_left - phase_displacers_available()
                                         end
-                                        trade_packet['Number of Items'] = 1
-                                        idx = idx +1
+                                        idx = idx + 1
                                     elseif inventory[index].id == 3435 and rubicund_available() > 1 and rubicund_left > 0 then
                                         trade_packet['Item Index %d':format(idx)] = index
                                         trade_packet['Item Count %d':format(idx)] = 1
-                                        idx = idx +1
+                                        idx = idx + 1
                                         rubicund_left = rubicund_left - 1
                                     end
-                                    packets.inject(trade_packet)
-                                    use_displacers = info.settings.displacer
-                                    break
-									end
 								end
+                                trade_packet['Number of Items'] = idx
+                                packets.inject(trade_packet)
+                                use_displacers = info.settings.displacer
 							end
 							busy = true
 							info.status = 'Attempting Pop'
@@ -459,6 +458,7 @@ windower.register_event('prerender', function()
 				end
 			end
 		end
+    end
 end)
 
 windower.register_event('incoming chunk',function(id,data,modified,injected,blocked)
