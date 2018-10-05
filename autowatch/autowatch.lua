@@ -256,7 +256,8 @@ windower.register_event('addon command', function (command, ...)
 			update_configuration()
 			return
 		else
-            notice('Rubicund can only be 0 or 1.')
+           		notice('Rubicund can only be 0 or 1.')
+		end
 	end
 	
 	if command == 'engage' then
@@ -368,11 +369,11 @@ windower.register_event('prerender', function()
                                             trade_packet['Item Count %d':format(idx)] = phase_displacers_available()
                                             displacer_left = displacer_left - phase_displacers_available()
                                         end
-                                        trade_packet['Number of Items'] = 1})
+                                        trade_packet['Number of Items'] = 1
                                         idx = idx +1
                                     elseif inventory[index].id = 3435 and rubicund_available() > 1 and rubicund_left > 0 then
-                                        trade_packet['Item Index %d':format(idx)] = index,
-                                        trade_packet['Item Count %d':format(idx)] = 1,
+                                        trade_packet['Item Index %d':format(idx)] = index
+                                        trade_packet['Item Count %d':format(idx)] = 1
                                         idx = idx +1
                                         rubicund_left = rubicund_left -1
                                     end
