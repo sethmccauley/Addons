@@ -371,11 +371,11 @@ windower.register_event('prerender', function()
                                         end
                                         trade_packet['Number of Items'] = 1
                                         idx = idx +1
-                                    elseif inventory[index].id = 3435 and rubicund_available() > 1 and rubicund_left > 0 then
+                                    elseif inventory[index].id == 3435 and rubicund_available() > 1 and rubicund_left > 0 then
                                         trade_packet['Item Index %d':format(idx)] = index
                                         trade_packet['Item Count %d':format(idx)] = 1
                                         idx = idx +1
-                                        rubicund_left = rubicund_left -1
+                                        rubicund_left = rubicund_left - 1
                                     end
                                     packets.inject(trade_packet)
                                     use_displacers = info.settings.displacer
@@ -459,7 +459,6 @@ windower.register_event('prerender', function()
 				end
 			end
 		end
-	end
 end)
 
 windower.register_event('incoming chunk',function(id,data,modified,injected,blocked)
