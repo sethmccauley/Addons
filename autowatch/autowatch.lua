@@ -24,7 +24,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ]]
 
 -- Future: Find a successful event to trigger unbusy() for casting and abilities. (Action Complete packet most likely)
-		-- Correct the issue where trading multiple times for displacers if more than 1 stack exists.
+-- Added trading if set to slave (for cells)
+-- Correct the issue where trading multiple times for displacers if more than 1 stack exists.
 -- Fixed: Corrected issue with 'falls to the ground' from DoT.			- 8.30.2018
 -- Fixed: Added in Displacer usage per fight.												- 8.4.2018
 -- Fixed: Pyxis delay for large parties/alliances 									- 7.30.2018
@@ -32,8 +33,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 _addon.name = 'AutoWatch'
 _addon.author = 'Langly'
-_addon.version = '1.09'
-_addon.date = '8.30.2018'
+_addon.version = '1.10'
+_addon.date = '10.11.2018'
 _addon.commands = {'autowatch', 'aw'}
 
 packets = require('packets')
@@ -183,9 +184,11 @@ windower.register_event('addon command', function (command, ...)
 		end
 		notice('Starting AutoWatch.')
 		switch = true
-		if info.status == 'None' then
+		if info.status == 'None' and info.settings.master then
 			info.status = 'Build Party'
-		end
+		else
+            info.status = 'Trade Cells'
+        end
 		return
 	end
 	
@@ -335,53 +338,48 @@ windower.register_event('prerender', function()
 			return
 		end
 		
-		if info.settings.master then
-			if info.status == 'Build Party' and busy == false then
+		if info.settings.master or info.settings.rubicund > 0 then
+			if info.status == 'Build Party' and busy == false and info.settings.master then
 				gather_trusts()
 			end
 			
 			if info.status == 'Trade Cells' and busy == false then
-				if info.settings.displacer == 0 then
-					info.status = 'Attempting Pop'
-					return
-				end
-				if info.settings.displacer > 0 then
+                if info.settings.displacer > 0 or info.settings.rubicund > 0 then
 					local rift = pick_nearest(get_marray('Planar Rift'))
 					if rift[1].valid_target then
 						face_target(rift[1].id)
 						if distance(rift[1].x,rift[1].y) < 6 then
 							notice('Trading displacers to Rift.')
-							if (info.settings.displacer > 0) then
-                                local rubicund_left = 1
-                                local displacer_left = info.settings.displacer
-                                local trade_packet = packets.new('outgoing', 0x36, {
-                                    ['Target'] = rift[1].id,
-                                    ['Target Index'] = rift[1].index,})
-								local inventory = windower.ffxi.get_items(0)
-								local idx = 1
-								for index=1,inventory.max do
-									if inventory[index].id == 3853 then
-                                        notice(index..' '..inventory[index].id)
-                                        trade_packet['Item Index %d':format(idx)] = index
-                                        if phase_displacers_available() > info.settings.displacer then
-                                            trade_packet['Item Count %d':format(idx)] = info.settings.displacer
-                                            displacer_left = displacer_left - info.settings.displacer
-                                        else
-                                            trade_packet['Item Count %d':format(idx)] = phase_displacers_available()
-                                            displacer_left = displacer_left - phase_displacers_available()
-                                        end
-                                        idx = idx + 1
-                                    elseif inventory[index].id == 3435 and rubicund_available() > 1 and rubicund_left > 0 then
-                                        trade_packet['Item Index %d':format(idx)] = index
-                                        trade_packet['Item Count %d':format(idx)] = 1
-                                        idx = idx + 1
-                                        rubicund_left = rubicund_left - 1
+							
+                            local rubicund_left = info.settings.rubicund
+                            local displacer_left = info.settings.displacer
+                            local trade_packet = packets.new('outgoing', 0x36, {
+                                ['Target'] = rift[1].id,
+                                ['Target Index'] = rift[1].index,})
+                            local inventory = windower.ffxi.get_items(0)
+                            local idx = 1
+                            for index=1,inventory.max do
+                                if inventory[index].id == 3853 and phase_displacers_available() > 0 and displacer_left > 0 then
+                                    trade_packet['Item Index %d':format(idx)] = index
+                                    if phase_displacers_available() > info.settings.displacer then
+                                        trade_packet['Item Count %d':format(idx)] = info.settings.displacer
+                                        displacer_left = displacer_left - info.settings.displacer
+                                    else
+                                        trade_packet['Item Count %d':format(idx)] = phase_displacers_available()
+                                        displacer_left = displacer_left - phase_displacers_available()
                                     end
-								end
-                                trade_packet['Number of Items'] = idx
-                                packets.inject(trade_packet)
-                                use_displacers = info.settings.displacer
-							end
+                                    idx = idx + 1
+                                elseif inventory[index].id == 3435 and rubicund_available() > 0 and rubicund_left > 0 then
+                                    trade_packet['Item Index %d':format(idx)] = index
+                                    trade_packet['Item Count %d':format(idx)] = 1
+                                    idx = idx + 1
+                                    rubicund_left = rubicund_left - 1
+                                end
+                            end
+                            trade_packet['Number of Items'] = idx
+                            packets.inject(trade_packet)
+                            use_displacers = info.settings.displacer
+
 							busy = true
 							info.status = 'Attempting Pop'
 							coroutine.schedule(unbusy, 1)
@@ -390,6 +388,12 @@ windower.register_event('prerender', function()
 							runto(rift[1])
 						end
 					end
+                    return
+				end
+                
+				if info.settings.displacer == 0 then
+					info.status = 'Attempting Pop'
+					return
 				end
 			end
 			
@@ -1068,7 +1072,13 @@ function update_status_based_on_role()
 		end
 	end
 	if info.settings.slave then
-		if info.status == 'Attempting Pop' or info.status == 'None' or info.status == "Build Party" or info.status == "Trade Cells" then
+        if info.settings.rubicund > 0 and info.status == 'None' then
+            info.status = 'Trade Cells'
+        end
+        if info.status == 'None' then
+            info.status = 'Waiting for Pop'
+        end
+		if info.status == 'Attempting Pop' or info.status == "Build Party" then
 			info.status = 'Waiting for Pop'
 		end
 		if info.status == 'Waiting for Pop' then
