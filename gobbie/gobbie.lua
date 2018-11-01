@@ -99,6 +99,11 @@ windower.register_event('incoming text', function(original, modified, original_m
         coroutine.schedule(trade_gobbie, 4)
     end
     get_key_count()
+    local keys_left = 0
+    keys_left = ANV_Keys + SP_Keys + AB_Keys
+    if keys_left == 1 then
+        notice('Gobbie Trading Finished.')
+    end
 end)
 
 function get_key_count()
