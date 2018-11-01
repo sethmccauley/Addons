@@ -48,6 +48,7 @@ AB_Keys = 0
 SP_Keys = 0
 ANV_Keys = 0
 
+notified = false
 continue = false
 
 windower.register_event('addon command', function(...)
@@ -56,6 +57,7 @@ windower.register_event('addon command', function(...)
 	if cmd then 
 		if cmd:lower() == 'start' then
             continue = true
+            notified = false
             get_key_count()
             notice('Starting trades for: '..SP_Keys..' SP Keys; '..AB_Keys..' AB Keys; '..ANV_Keys..' #ANV Keys.')
             trade_gobbie()
@@ -97,13 +99,15 @@ windower.register_event('incoming text', function(original, modified, original_m
     local msg = original:lower();
     if msg:find('obtained: ') then
         coroutine.schedule(trade_gobbie, 4)
+        get_key_count()
+        local keys_left = 0
+        keys_left = ANV_Keys + SP_Keys + AB_Keys
+        if keys_left == 1 and not notified then
+            notified = true
+            notice('Gobbie Trading Finished.')
+        end
     end
-    get_key_count()
-    local keys_left = 0
-    keys_left = ANV_Keys + SP_Keys + AB_Keys
-    if keys_left == 1 then
-        notice('Gobbie Trading Finished.')
-    end
+
 end)
 
 function get_key_count()
