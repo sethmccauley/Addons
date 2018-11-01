@@ -234,6 +234,10 @@ end)
 function determine_interaction(obj)
     local index = purchase_queue:find(obj)
     
+    if #purchase_queue == 1 then
+        notice('Sparks Buying Finished.')
+    end
+    
     if index then
         table.remove(purchase_queue, index)
     end
