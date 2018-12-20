@@ -330,6 +330,7 @@ end)
 windower.register_event('prerender', function()
 	update_info_panel()
 	test_limbo2_time()
+    if busy == true then windower.ffxi.run(false) end
 	
 	if switch == true and busy == false then
 		update_status_based_on_role()
@@ -436,6 +437,7 @@ windower.register_event('prerender', function()
 						send_cmd('input /lockon')
 					end
 					if info.settings.should_engage == true then
+                        if busy == true then windower.ffxi.run(false) return end
 						face_target(target.id)
 						check_distance(target.id)
 					end
@@ -1075,6 +1077,9 @@ function update_status_based_on_role()
         if info.settings.rubicund > 0 and info.status == 'None' then
             info.status = 'Trade Cells'
         end
+        if info.status == 'Trade Cells' and info.settings.rubicund == 0 then
+            info.status = 'Waiting for Pop'
+        end
         if info.status == 'None' then
             info.status = 'Waiting for Pop'
         end
@@ -1192,11 +1197,11 @@ function have_item(id)
 	local bags = {'inventory'}
 
 	for k, v in pairs(bags) do
-			for index = 1, items["max_%s":format(v)] do
-					if items[v][index].id == id then
-							return true
-					end
-			end
+        for index = 1, items["max_%s":format(v)] do
+            if items[v][index].id == id then
+                return true
+            end
+        end
 	end
 	return false
 end
@@ -1211,14 +1216,15 @@ function test_limbo2_time()
 end
 
 function check_distance(id)
+    if busy == true then windower.ffxi.run(false) return end
 	local target_id = id or 0
 	local self_vector = windower.ffxi.get_mob_by_index(windower.ffxi.get_player().index or 0)
 	local mob = pick_nearest(get_marray(info.settings.target))
+    local angle = (math.atan2((mob[1].y - self_vector.y), (mob[1].x - self_vector.x))*180/math.pi)*-1
 	local distance = mob[1].distance:sqrt()
 	
 	if distance > 3 then
-		face_target(target_id)
-		windower.ffxi.run()
+        windower.ffxi.run((angle):radian())
 	elseif distance < .9 then
 		local angle = (math.atan2((mob[1].y - self_vector.y), (mob[1].x - self_vector.x))*180/math.pi)*-1
 		windower.ffxi.run((angle+180):radian())
