@@ -55,6 +55,12 @@ return {
             ["action"]="Third Eye", 
             ["condition"]="ready", 
             ["modifier"]=""
+        },
+        [8]={
+            ["prefix"]="/jobability", 
+            ["action"]="Berserk", 
+            ["condition"]="ready", 
+            ["modifier"]=""
         }
     }
 }
