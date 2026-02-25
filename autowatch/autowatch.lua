@@ -1,5 +1,5 @@
 --[[
-Copyright © 2018, Langly of Quetzalcoatl
+Copyright © 2018, L of Quetz
 All rights reserved.
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
@@ -8,7 +8,7 @@ modification, are permitted provided that the following conditions are met:
     * Redistributions in binary form must reproduce the above copyright
       notice, this list of conditions and the following disclaimer in the
       documentation and/or other materials provided with the distribution.
-    * Neither the name of React nor the
+    * Neither the name of AutoWatch nor the
       names of its contributors may be used to endorse or promote products
       derived from this software without specific prior written permission.
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
@@ -32,7 +32,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -- Fixed: Build pet ID's into party list for detection of mob death - 7.28.2018
 
 _addon.name = 'AutoWatch'
-_addon.author = 'Langly'
+_addon.author = 'L'
 _addon.version = '1.10'
 _addon.date = '10.11.2018'
 _addon.commands = {'autowatch', 'aw'}
@@ -1232,3 +1232,4 @@ function check_distance(id)
 		windower.ffxi.run(false)
 	end
 end
+
