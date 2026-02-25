@@ -1,5 +1,5 @@
 --[[
-Copyright © 2018, Langly of Quetzalcoatl
+Copyright © 2018, L of Quetz
 All rights reserved.
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
@@ -8,7 +8,7 @@ modification, are permitted provided that the following conditions are met:
     * Redistributions in binary form must reproduce the above copyright
       notice, this list of conditions and the following disclaimer in the
       documentation and/or other materials provided with the distribution.
-    * Neither the name of React nor the
+    * Neither the name of Ambuloot nor the
       names of its contributors may be used to endorse or promote products
       derived from this software without specific prior written permission.
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
@@ -28,7 +28,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --]]
 
 _addon.name = 'Ambuloot'
-_addon.author = 'Langly'
+_addon.author = 'L'
 _addon.version = '1.1'
 _addon.date = '11.15.2019'
 _addon.commands = {'ambuloot','ambu'}
@@ -389,4 +389,5 @@ end
 function count_inv()
 	local playerinv = windower.ffxi.get_items().inventory
 	return playerinv.max - playerinv.count
+
 end
