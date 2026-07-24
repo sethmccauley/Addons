@@ -2,4 +2,4 @@
 Lua Addons for FFXI
 A small selection of addons modified or created by me.
 
-To Be Uploaded - Agent + BB
+Many of which were written before my code sophistication grew. Use at your own risk.
